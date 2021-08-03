@@ -36,8 +36,8 @@ export default class AssistancesController {
     public async syncronize ({ params, request, response } : HttpContextContract) {
         const ip = params.ip;
         const dateCurrent = moment()
-        const year = request.input('year', dateCurrent.year())
-        const month = request.input('month', dateCurrent.month() + 1)
+        const year = parseInt(request.input('year', dateCurrent.year()))
+        const month = parseInt(request.input('month', dateCurrent.month() + 1))
         const clock = new Clock(ip)
         let { assistances , err } = await clock.getAttendents()
         .then(res => ({  total: res.total, assistances: res.assistencias, err: null }))
@@ -48,7 +48,7 @@ export default class AssistancesController {
             code: "ERR_SYNCRONIZE_ASSISTANCES"
         })
         // setting datos
-        let datos = collect(assistances || []).where('year',  year).where('month', month);
+        let datos = await collect(assistances || []).where('Anio',  year).where('Mes', month);
         let payload : Object[] = []
         await datos.map((assistance: any) => {
             assistance.ip = ip
